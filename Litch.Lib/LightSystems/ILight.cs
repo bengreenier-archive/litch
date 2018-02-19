@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace litch
+namespace Litch.Lib.LightSystems
 {
-    class Program
+    public interface ILight
     {
-        static void Main(string[] args)
-        {
-        }
+        string Name { get; }
     }
 }
