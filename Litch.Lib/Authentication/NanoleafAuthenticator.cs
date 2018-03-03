@@ -19,6 +19,7 @@ namespace Litch.Lib.Authentication
             try
             {
                 result.Data = await new NanoleafProtocol(endpoint).CreateUserAsync();
+                result.Status = AuthenticationResult.Result.Success;
             }
             catch (Exception ex)
             {
