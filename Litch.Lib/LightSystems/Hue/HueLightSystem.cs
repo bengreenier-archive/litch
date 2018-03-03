@@ -33,7 +33,7 @@ namespace Litch.Lib.LightSystems.Hue
         {
             this.Endpoint = endpoint;
             this.AccessToken = accessToken;
-            this.AppName = Guid.NewGuid().ToString();
+            this.AppName = Guid.NewGuid().ToString().Substring(0, 10);
         }
 
         public async Task<bool> AuthenticateAsync()
