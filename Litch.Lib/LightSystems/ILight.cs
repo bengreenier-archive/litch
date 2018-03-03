@@ -8,6 +8,7 @@ namespace Litch.Lib.LightSystems
 {
     public interface ILight
     {
+        string Id { get; }
         string Name { get; }
     }
 }

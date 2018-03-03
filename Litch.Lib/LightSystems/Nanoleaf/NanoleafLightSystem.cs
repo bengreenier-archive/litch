@@ -48,12 +48,14 @@ namespace Litch.Lib.LightSystems.Nanoleaf
         public async Task<IEnumerable<ILight>> GetLightsAsync()
         {
             var rawData = await new NanoleafProtocol(Endpoint).GetRawDataAsync(AccessToken);
+            var parsedData = JObject.Parse(rawData);
+            var mainLightName = parsedData["name"].ToString();
 
-            var mainLightName = JObject.Parse(rawData)["name"].ToString();
-
-            // nanoleaf lights aren't individually addressable so we just have one
             // see http://forum.nanoleaf.me/docs/openapi for more info
-            return new ILight[] { new NanoleafLight(mainLightName)};
+            return parsedData["panelLayout"]["layout"]["positionData"]
+                .ToArray()
+                .Select(t => new NanoleafLight(mainLightName, t["panelId"].ToString()) as ILight)
+                .ToList();
         }
     }
 }

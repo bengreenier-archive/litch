@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Litch.Lib.LightSystems.Nanoleaf
+namespace Litch.Lib.LightSystems.Hue
 {
-    public class NanoleafLight : ILight
+    public class HueLight : ILight
     {
-        public NanoleafLight(string name, string id)
+        public HueLight(string name, string id)
         {
             this.Name = name;
             this.Id = id;

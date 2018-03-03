@@ -126,10 +126,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\AuthenticationResult.cs" />
+    <Compile Include="Authentication\HuelightAuthenticator.cs" />
     <Compile Include="Authentication\IAuthenticator.cs" />
     <Compile Include="Authentication\NanoleafAuthenticator.cs" />
+    <Compile Include="Discovery\HuelightDiscoverer.cs" />
     <Compile Include="Discovery\IDiscoverer.cs" />
     <Compile Include="Discovery\NanoleafDiscoverer.cs" />
+    <Compile Include="LightSystems\Hue\HueLight.cs" />
+    <Compile Include="LightSystems\Hue\HueLightSystem.cs" />
     <Compile Include="LightSystems\ILight.cs" />
     <Compile Include="LightSystems\ILightSystem.cs" />
     <Compile Include="LightSystems\Nanoleaf\NanoleafLight.cs" />
