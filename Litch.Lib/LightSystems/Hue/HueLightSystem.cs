@@ -6,6 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Colorspace;
+using Q42.HueApi.ColorConverters;
+using Q42.HueApi.ColorConverters.Original;
+using Litch.Lib.Color;
+using Q42.HueApi.Models.Groups;
 
 namespace Litch.Lib.LightSystems.Hue
 {
@@ -67,6 +72,43 @@ namespace Litch.Lib.LightSystems.Hue
         public Task IdentifyAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task PaintAsync(IEnumerable<PaintRequest> paintRequests)
+        {
+            var client = new LocalHueClient(this.Endpoint.Address.ToString());
+
+            client.Initialize(this.AccessToken);
+
+            var colorBuckets = paintRequests
+                .GroupBy(r => r.Color)
+                .Select(g => g.ToList())
+                .ToList();
+
+            var pendingCommands = new List<Task<HueResults>>();
+
+            foreach (var colorBucket in colorBuckets)
+            {
+                var color = colorBucket[0].Color;
+                var lightIds = colorBucket.Select(b => b.Light.Id);
+
+                var cmd = new LightCommand().TurnOn().SetColor(color.ToRGB());
+
+                pendingCommands.Add(client.SendCommandAsync(cmd, lightIds));
+            }
+
+            var commandResults = await Task.WhenAll(pendingCommands);
+            var errorResults = commandResults
+                .Where(r => r.HasErrors())
+                .SelectMany(r => r
+                    .Errors
+                    .Select(e => e.Error));
+
+            if (errorResults.Count() > 0)
+            {
+                throw new PaintRequestException(new AggregateException(errorResults
+                    .Select(e => new Exception(e.Description))));
+            }
         }
     }
 }

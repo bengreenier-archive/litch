@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Colorspace;
+using Q42.HueApi.ColorConverters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -15,5 +17,6 @@ namespace Litch.Lib.LightSystems
         Task<bool> AuthenticateAsync();
         Task IdentifyAsync();
         Task<IEnumerable<ILight>> GetLightsAsync();
+        Task PaintAsync(IEnumerable<PaintRequest> paintRequests);
     }
 }

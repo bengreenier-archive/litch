@@ -1,4 +1,5 @@
-﻿using Litch.Lib.LightSystems;
+﻿using Litch.Lib.Color;
+using Litch.Lib.LightSystems;
 using Litch.Lib.LightSystems.Hue;
 using Litch.Lib.LightSystems.Nanoleaf;
 using Litch.Lib.Protocols.ColourLovers;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Litch.Cli
@@ -22,7 +24,8 @@ namespace Litch.Cli
             string[] nanoToken = null,
             string[] hueAddr = null,
             string[] hueApp = null,
-            string[] hueToken = null)
+            string[] hueToken = null,
+            string hueSelector = null)
         {
             if (nanoToken == null &&
                 hueToken == null)
@@ -72,6 +75,11 @@ namespace Litch.Cli
             var colorApi = new ColourLoversProtocol();
             var chat = new TwitchLightProtocol(twitchUser, twitchAuth, twitchChannel);
 
+            chat.OnError += (object sender, Exception ex) =>
+            {
+                Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
+            };
+
             chat.OnColorData += async (object sender, string[] colorData) =>
             {
                 var palettes = await colorApi.GetTopPaletteAsync(hueOption: colorData);
@@ -81,18 +89,37 @@ namespace Litch.Cli
 
                 Console.WriteLine($"Setting Palette {palette.BadgeUrl}");
 
+                var pendingSystemPaints = new List<Task>();
+                
                 foreach (var system in systems)
                 {
                     var lights = await system.GetLightsAsync();
 
+                    // apply hueSelector if needed
+                    if (system is HueLightSystem &&
+                        hueSelector != null)
+                    {
+                        // TODO(bengreenier): if we're really ignoring case here we should document that...
+                        var re = new Regex(hueSelector, RegexOptions.IgnoreCase);
+
+                        lights = lights.Where(l => re.IsMatch(l.Name));
+                    }
+
+                    var paintRequests = new List<PaintRequest>();
+
+                    // formulate the paints for the system
                     for (var i = 0; i < lights.Count(); i++)
                     {
                         var lightColor = palette.Colors[i % palette.Colors.Length];
-
-                        // convert color from hex
-                        Console.WriteLine($"Setting {lights.ElementAt(i).Id} to {lightColor}");
+                        paintRequests.Add(new PaintRequest(new HexColor(lightColor), lights.ElementAt(i)));
                     }
+
+                    // begin the work to paint the system, tracking that task for future resolution
+                    pendingSystemPaints.Add(system.PaintAsync(paintRequests));
                 }
+
+                // finally, we wait for all paints to resolve (complete) across all systems
+                await Task.WhenAll(pendingSystemPaints);
             };
 
             chat.Connect();

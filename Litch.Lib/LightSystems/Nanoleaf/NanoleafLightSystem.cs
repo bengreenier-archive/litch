@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Q42.HueApi.ColorConverters;
 
 namespace Litch.Lib.LightSystems.Nanoleaf
 {
@@ -62,7 +63,7 @@ namespace Litch.Lib.LightSystems.Nanoleaf
             // currently hardcoded for testing, but just to verify the RGB -> HSL converter works
             // properly we'll use it to identify the lights rather than hardcoding the HSL value directly.
             var rgbColor = ColorTranslator.FromHtml("#a7f442");
-
+            
             var convertedRgbValue = new ColorRGB(rgbColor.R / RGBModifier, rgbColor.G / RGBModifier, rgbColor.B / RGBModifier);
             var hslConversion = new ColorHSV(convertedRgbValue);
 
@@ -77,6 +78,11 @@ namespace Litch.Lib.LightSystems.Nanoleaf
             };
 
             return this.NanoleafProtocol.WriteDisplayCommandAsync(this.AccessToken, displayTemp);
+        }
+
+        public Task PaintAsync(IEnumerable<PaintRequest> paintRequests)
+        {
+            throw new NotImplementedException();
         }
     }
 }

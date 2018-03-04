@@ -55,6 +55,11 @@ namespace Litch.Lib.Protocols.Twitch
         public event EventHandler<string[]> OnColorData;
 
         /// <summary>
+        /// Emitted when an error occurs
+        /// </summary>
+        public event EventHandler<Exception> OnError;
+
+        /// <summary>
         /// Default ctor
         /// </summary>
         /// <param name="username">twitch username</param>
@@ -68,6 +73,10 @@ namespace Litch.Lib.Protocols.Twitch
             this.client = new TwitchClient(new ConnectionCredentials(username, oauth), channel);
 
             this.client.OnChatCommandReceived += OnCommandReceived;
+            this.client.OnConnectionError += (object sender, OnConnectionErrorArgs args) =>
+            {
+                this?.OnError(this, args.Error.Exception);
+            };
         }
 
         /// <summary>

@@ -38,7 +38,9 @@ namespace Litch.Cli
                 CommandLine.Arguments.ContainsKey("hueToken") ?
                     CommandLine.Arguments["hueToken"] is string ?
                             new string[] { CommandLine.Arguments["hueToken"] as string } :
-                            CommandLine.Arguments["hueToken"] as string[] : null);
+                            CommandLine.Arguments["hueToken"] as string[] : null,
+                CommandLine.Arguments.ContainsKey("hueSelector") ?
+                    CommandLine.Arguments["hueSelector"] as string : null);
         }
     }
 }
