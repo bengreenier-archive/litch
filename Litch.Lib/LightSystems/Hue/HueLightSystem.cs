@@ -63,5 +63,10 @@ namespace Litch.Lib.LightSystems.Hue
                 .Select(l => new HueLight(l.Name, l.Id) as ILight)
                 .ToList();
         }
+
+        public Task IdentifyAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

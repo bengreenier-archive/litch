@@ -10,7 +10,7 @@ namespace Litch.Cli
     {
         static void Main(string[] args)
         {
-            Task.Run(async () => { await AsyncEntryPoint(args); }).Wait();
+            AsyncEntryPoint(args).Wait();
         }
 
         static async Task AsyncEntryPoint(string[] args)
