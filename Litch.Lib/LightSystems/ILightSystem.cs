@@ -13,6 +13,7 @@ namespace Litch.Lib.LightSystems
         IPEndPoint Endpoint { get; }
 
         Task<bool> AuthenticateAsync();
+        Task IdentifyAsync();
         Task<IEnumerable<ILight>> GetLightsAsync();
     }
 }
