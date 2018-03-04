@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Litch.Lib.LightSystems.Nanoleaf
 {
-    class NanoleafLightSystem : ILightSystem
+    public class NanoleafLightSystem : ILightSystem
     {
         public NanoleafLightSystem(IPEndPoint endpoint, string accessToken = null)
         {
